@@ -22,6 +22,15 @@ describe User do
 
   subject { @user }
 
+  describe "accesible attributes" do
+    it "should not allow access to admin" do
+      expect do
+        User.new(admin: true) 
+      end.to raise_error(ActiveModel::MassAssignmentSecurity::Error)
+    end
+  end
+  
+  
   it { should respond_to(:name) }
   it { should respond_to(:email) }
   it { should respond_to(:password_digest) }
