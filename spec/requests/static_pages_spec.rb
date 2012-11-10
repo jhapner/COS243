@@ -30,7 +30,22 @@ describe "Static pages" do
           page.should have_selector("li##{item.id}", text: item.content)
         end
       end
-    end
+
+	  describe "should have a count of 2" do
+        it { should have_selector('span', text:"2 microposts") }
+	  end
+	end
+	describe "for single micropost" do
+	  let(:user) { FactoryGirl.create(:user) }
+      before do
+        FactoryGirl.create(:micropost, user: user, content: "Lorem ipsum")
+        sign_in user
+        visit root_path
+      end
+	  describe "should have a count of 1" do
+        it { should have_selector('span', text:"1 micropost") }
+	  end
+	end
   end
 
 
