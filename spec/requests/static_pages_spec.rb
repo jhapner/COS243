@@ -16,11 +16,11 @@ describe "Static pages" do
 
     it_should_behave_like "all static pages"
    
-   	describe "for signed-in users" do
+    describe "for signed-in users" do
       let(:user) { FactoryGirl.create(:user) }
       before do
-        FactoryGirl.create(:micropost, user: user, content: "Lorem ipsum")
-        FactoryGirl.create(:micropost, user: user, content: "Dolor sit amet")
+        FactoryGirl.create(:micropost, user: user, content: "Lorem")
+        FactoryGirl.create(:micropost, user: user, content: "Ipsum")
         sign_in user
         visit root_path
       end
@@ -31,10 +31,22 @@ describe "Static pages" do
         end
       end
 
+	  describe "follower/following counts" do
+        let(:other_user) { FactoryGirl.create(:user) }
+        before do
+          other_user.follow!(user)
+          visit root_path
+        end
+
+        it { should have_link("0 following", href: following_user_path(user)) }
+        it { should have_link("1 followers", href: followers_user_path(user)) }
+      end
+
 	  describe "should have a count of 2" do
         it { should have_selector('span', text:"2 microposts") }
 	  end
 	end
+
 	describe "for single micropost" do
 	  let(:user) { FactoryGirl.create(:user) }
       before do
@@ -42,6 +54,7 @@ describe "Static pages" do
         sign_in user
         visit root_path
       end
+
 	  describe "should have a count of 1" do
         it { should have_selector('span', text:"1 micropost") }
 	  end
