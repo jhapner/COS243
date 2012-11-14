@@ -215,7 +215,23 @@ describe User do
     it { should be_following(other_user) }
     its(:followed_users) { should include(other_user) }
 
-    describe "followed user" do
+    it "should destroy associated relationships" do
+      relationships = @user.relationships.dup
+      @user.destroy
+      relationships.should_not be_empty
+	  relationships.each do |relationship|
+		Relationship.find_by_id(relationship.follower_id).should be_nil
+		Relationship.find_by_id(relationship.followed_id).should be_nil
+      end
+	end
+
+	it "should destroy associated reverse_relationships" do
+      relationships = @user.reverse_relationships.dup
+      @user.destroy
+      relationships.should be_empty
+	end
+  
+	describe "followed user" do
       subject { other_user }
       its(:followers) { should include(@user) }
     end

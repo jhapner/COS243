@@ -73,6 +73,17 @@ describe "User pages" do
       it { should have_content(user.microposts.count) }
     end
 
+	describe "stats" do
+	  let(:other_user) { FactoryGirl.create(:user) }
+		before do
+          other_user.follow!(user)
+		  visit user_path(user)
+        end
+
+		it { should have_link("0 following", href: following_user_path(user)) }
+        it { should have_link("1 followers", href: followers_user_path(user)) }		
+	end
+
     describe "follow/unfollow buttons" do
       let(:other_user) { FactoryGirl.create(:user) }
       before { sign_in user }
@@ -97,6 +108,7 @@ describe "User pages" do
           it { should have_selector('input', value: 'Unfollow') }
         end
       end
+
 
       describe "unfollowing a user" do
         before do
@@ -136,11 +148,10 @@ describe "User pages" do
       end
       describe "after submission" do
         before { click_button submit }
-
-        it { should have_selector('title', text: 'Sign up') }
+      	  
+		it { should have_selector('title', text: 'Sign up') }
         it { should have_content('error') }
-      end
-	  
+	  end
     end
 
     describe "with valid information" do
